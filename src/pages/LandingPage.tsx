@@ -124,6 +124,7 @@ const LandingPage = () => {
             <Button
               variant="outline"
               size="lg"
+              onClick={() => navigate('/resources')}
               className="text-lg px-8 py-4 glass-card"
             >
               {t('actions.learn_more')}

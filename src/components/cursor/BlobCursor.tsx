@@ -27,8 +27,10 @@ export const BlobCursor = () => {
 
     const handleMouseEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isClickable = target.closest('a, button, [role="button"], input, textarea, select');
-      setIsPointer(!!isClickable);
+      if (target && typeof target.closest === 'function') {
+        const isClickable = target.closest('a, button, [role="button"], input, textarea, select');
+        setIsPointer(!!isClickable);
+      }
     };
 
     const handleMouseLeave = () => {
@@ -41,9 +43,12 @@ export const BlobCursor = () => {
 
     // Add hover detection for interactive elements
     const interactiveElements = document.querySelectorAll('a, button, [role="button"], input, textarea, select');
+    const handleInteractiveEnter = () => setIsPointer(true);
+    const handleInteractiveLeave = () => setIsPointer(false);
+    
     interactiveElements.forEach((el) => {
-      el.addEventListener('mouseenter', () => setIsPointer(true));
-      el.addEventListener('mouseleave', () => setIsPointer(false));
+      el.addEventListener('mouseenter', handleInteractiveEnter);
+      el.addEventListener('mouseleave', handleInteractiveLeave);
     });
 
     return () => {
@@ -51,8 +56,8 @@ export const BlobCursor = () => {
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
       interactiveElements.forEach((el) => {
-        el.removeEventListener('mouseenter', () => setIsPointer(true));
-        el.removeEventListener('mouseleave', () => setIsPointer(false));
+        el.removeEventListener('mouseenter', handleInteractiveEnter);
+        el.removeEventListener('mouseleave', handleInteractiveLeave);
       });
     };
   }, [cursorX, cursorY]);

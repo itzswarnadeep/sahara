@@ -8,6 +8,10 @@ import { BlobCursor } from "@/components/cursor/BlobCursor";
 import LandingPage from "./pages/LandingPage";
 import OnboardingFlow from "./pages/OnboardingFlow";
 import ProblemInterface from "./pages/problems/ProblemInterface";
+import ChatPage from "./pages/ChatPage";
+import BookingPage from "./pages/BookingPage";
+import ResourcesPage from "./pages/ResourcesPage";
+import TrackerPage from "./pages/TrackerPage";
 import NotFound from "./pages/NotFound";
 import './i18n';
 
@@ -25,7 +29,10 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<OnboardingFlow />} />
             <Route path="/problems/:problemId" element={<ProblemInterface />} />
-            {/* Chat, Resources, Booking, Tracker pages will be added here */}
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/tracker" element={<TrackerPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

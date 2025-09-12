@@ -172,7 +172,7 @@ const ProblemInterface = () => {
               </div>
             </Card>
 
-            <Card className="glass-card p-6 hover:shadow-ambient transition-all cursor-pointer">
+            <Card className="glass-card p-6 hover:shadow-ambient transition-all cursor-pointer" onClick={() => navigate('/tracker')}>
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-xl bg-success/10">
                   <Activity className="w-6 h-6 text-success" />
@@ -244,9 +244,9 @@ const ProblemInterface = () => {
                           <p className="text-sm text-muted-foreground mb-3">
                             {resource.description}
                           </p>
-                          <Button variant="ghost" size="sm" className="text-primary">
-                            Access Resource
-                          </Button>
+                    <Button variant="ghost" size="sm" className="text-primary" onClick={() => navigate('/resources')}>
+                      Access Resource
+                    </Button>
                         </div>
                       </div>
                     </Card>
@@ -285,8 +285,8 @@ const ProblemInterface = () => {
                           ))}
                         </div>
                       </div>
-                      <Button variant="outline" className="w-full">
-                        Open Journal
+                      <Button variant="outline" className="w-full" onClick={() => navigate('/resources')}>
+                        Browse All Resources
                       </Button>
                     </div>
                   </Card>
