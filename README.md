@@ -1,54 +1,54 @@
-# Student SafeSpace 
+# Wellbeing Buddy - Student Mental Health Platform
 
-## 🌟 Mental Health Support Platform for Students
+A comprehensive mental health and wellbeing platform designed specifically for students, featuring real-time peer support, wellness tracking, crisis intervention, and accessibility-first design.
 
-A comprehensive, privacy-first mental health platform designed specifically for college students. Student SafeSpace provides anonymous support, professional counseling access, and wellness tracking in a stigma-free environment.
+## 🌟 Features
 
-![Student SafeSpace Hero](src/assets/hero-mental-health.jpg)
+### Core Functionality
+- **Anonymous Student Registration**: Secure, privacy-focused registration with ephemeral handles
+- **Mental Health Screening**: PHQ-9, GAD-7, and custom assessment tools
+- **Real-time Peer Chat**: Anonymous group discussions organized by problem categories
+- **Wellness Tracking**: Mood logging, goal setting, habit tracking, and journaling
+- **Crisis Intervention**: Automated crisis detection with immediate support resources
 
-## ✨ Features
+### Advanced Features
+- **Accessibility Compliance**: Full WCAG 2.1 AA compliance with screen reader support
+- **Multi-language Support**: Internationalization ready with language switching
+- **Performance Optimized**: Code splitting, lazy loading, and virtual scrolling
+- **Security First**: Input validation, rate limiting, and content moderation
+- **Offline Support**: Progressive Web App with offline capabilities
 
-### 🔐 Privacy & Anonymity First
-- **Anonymous by default** - Ephemeral handles that rotate per session
-- **End-to-end encryption** for all communications
-- **Optional identity reveal** with explicit consent and audit logging
-- **GDPR compliant** data handling
+## 🏗️ Architecture
 
-### 🧠 Mental Health Screening & Triage
-- **PHQ-9 Depression Assessment** - Validated screening tool
-- **GAD-7 Anxiety Assessment** - Professional anxiety evaluation  
-- **Intelligent triage mapping** to 7 specialized problem interfaces
-- **Progress tracking** with mood journaling and goal setting
+### Technology Stack
+- **Frontend**: React 18 with TypeScript
+- **State Management**: Zustand with persistence
+- **Styling**: Tailwind CSS with custom accessibility themes
+- **Build Tool**: Vite for fast development and optimized builds
+- **Testing**: Vitest for unit and integration testing
 
-### 💬 Anonymous Peer Support
-- **Real-time anonymous chat** with other students facing similar challenges
-- **Moderated safe spaces** with automated content filtering
-- **Problem-specific chat rooms** (relationships, career anxiety, academic stress, etc.)
-- **Ephemeral messaging** with 30-day auto-deletion
-
-### 🩺 Professional Counselor Access
-- **Anonymous booking system** with optional identity reveal
-- **Multiple contact methods** - phone, video, or in-person
-- **Crisis triage** with immediate professional routing
-- **24/7 availability** for urgent mental health needs
-
-### 📚 Curated Resource Library
-- **Problem-specific resources** (videos, audio guides, articles, PDFs)
-- **Evidence-based content** from mental health professionals
-- **Multilingual support** (English, Hindi, Kashmiri, Urdu)
-- **Offline accessibility** with service worker caching
-
-### 📊 Wellness Tracking & Analytics
-- **Mood journaling** with pattern recognition
-- **Goal setting and progress monitoring**
-- **Assessment history** with trend analysis
-- **Personalized insights** and recommendations
-
-### 🌍 Cultural Sensitivity & Accessibility
-- **Regional language support** including Kashmiri and Hindi
-- **Cultural mental health considerations** for South Asian students
-- **WCAG AA accessibility** compliance
-- **Reduced motion support** for users with vestibular disorders
+### Project Structure
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components (buttons, inputs, etc.)
+│   ├── forms/          # Form components with validation
+│   └── layout/         # Layout components (header, sidebar, etc.)
+├── hooks/              # Custom React hooks
+│   ├── useAccessibility.ts    # Accessibility utilities
+│   ├── usePerformance.ts      # Performance monitoring
+│   └── useSecurity.ts         # Security utilities
+├── stores/             # Zustand state management
+│   ├── useStore.ts            # Main application state
+│   ├── useUIStore.ts          # UI and theme state
+│   ├── useWellnessStore.ts    # Wellness tracking state
+│   └── useChatStore.ts        # Chat and messaging state
+├── utils/              # Utility functions
+│   ├── validation.ts          # Input validation and sanitization
+│   └── performance.ts         # Performance optimization utilities
+├── types/              # TypeScript type definitions
+└── pages/              # Page components
+```
 
 ## 🎯 Supported Problem Areas
 

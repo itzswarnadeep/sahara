@@ -1,107 +1,225 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   ArrowLeft, 
   Send, 
-  Users, 
+  Bot, 
   Shield, 
   AlertTriangle,
   MessageCircle,
   Smile,
-  Heart
+  Heart,
+  Brain,
+  Loader2
 } from 'lucide-react';
 import { useStore } from '@/stores/useStore';
-
-interface Message {
-  id: string;
-  sender: string;
-  content: string;
-  timestamp: Date;
-  mood?: 'positive' | 'neutral' | 'concerned';
-}
+import { geminiService, mentalHealthIssues, type ChatMessage } from '@/services/geminiService';
 
 const ChatPage = () => {
   const { t } = useTranslation(['common']);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { student, currentProblemId } = useStore();
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [connectedUsers, setConnectedUsers] = useState(3);
+  const [selectedIssue, setSelectedIssue] = useState<string>('general');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatStarted, setChatStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Mock initial messages
+  // Category mapping for mental health support
+  const categoryMapping: { [key: string]: string } = {
+    'anxiety': 'anxiety',
+    'career': 'placement',
+    'family': 'family',
+    'relationship': 'relationships',
+    'financial': 'financial',
+    'anti-ragging': 'ragging',
+    'interfaith': 'interfaith'
+  };
+
+  // Initialize selected issue based on URL parameter
   useEffect(() => {
-    const mockMessages: Message[] = [
-      {
+    const category = searchParams.get('category');
+    if (category && categoryMapping[category]) {
+      setSelectedIssue(categoryMapping[category]);
+    }
+  }, [searchParams]);
+
+  // Initialize chat session
+  const startChatSession = async () => {
+    if (chatStarted) return;
+    
+    setIsLoading(true);
+    try {
+      const { sessionId: newSessionId, greeting } = await geminiService.startChat(selectedIssue);
+      setSessionId(newSessionId);
+      
+      const welcomeMessage: ChatMessage = {
         id: '1',
-        sender: 'Kash-Guest-A12B',
-        content: 'Hi everyone, I\'ve been feeling really overwhelmed with career anxiety lately. Anyone else dealing with this?',
-        timestamp: new Date(Date.now() - 300000),
-        mood: 'concerned'
-      },
-      {
-        id: '2', 
-        sender: 'Anon-Helper-X9Y2',
-        content: 'You\'re not alone! I went through similar feelings during placement season. What helps me is breaking things down into small steps.',
-        timestamp: new Date(Date.now() - 240000),
-        mood: 'positive'
-      },
-      {
-        id: '3',
-        sender: 'Guest-Support-M7N4',
-        content: 'That\'s really good advice. I\'ve found that talking to friends and taking breaks helps too. Remember to be kind to yourself.',
-        timestamp: new Date(Date.now() - 180000),
-        mood: 'positive'
-      }
-    ];
-    setMessages(mockMessages);
-  }, []);
+        role: 'assistant',
+        content: greeting,
+        timestamp: new Date()
+      };
+      
+      setMessages([welcomeMessage]);
+      setChatStarted(true);
+    } catch (error) {
+      console.error('Failed to start chat:', error);
+      const errorMessage: ChatMessage = {
+        id: '1',
+        role: 'assistant',
+        content: 'I apologize, but I\'m having trouble connecting right now. Please try again in a moment.',
+        timestamp: new Date()
+      };
+      setMessages([errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    startChatSession();
+  }, [selectedIssue]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Mock typing indicator
-  useEffect(() => {
-    if (messages.length > 3) {
-      const timer = setTimeout(() => {
-        setIsTyping(true);
-        setTimeout(() => {
-          setIsTyping(false);
-          setMessages(prev => [...prev, {
-            id: Date.now().toString(),
-            sender: 'Support-Friend-K3L8',
-            content: 'I appreciate everyone sharing here. It really helps to know we\'re not going through this alone. 💙',
-            timestamp: new Date(),
-            mood: 'positive'
-          }]);
-        }, 2000);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [messages.length]);
-
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        sender: student?.ephemeralHandle || 'Anonymous-User',
-        content: message.trim(),
-        timestamp: new Date(),
-        mood: 'neutral'
+  const handleSendMessage = async () => {
+    if (!message.trim() || !sessionId || isLoading) return;
+    
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: message.trim(),
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setMessage('');
+    setIsLoading(true);
+    setIsTyping(true);
+    
+    try {
+      // Check for crisis indicators first
+      const crisisAnalysis = await geminiService.detectCrisisIndicators(userMessage.content);
+      
+      if (crisisAnalysis.isCrisis && crisisAnalysis.riskLevel === 'immediate') {
+        const crisisMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `I'm very concerned about what you've shared. Your safety is the most important thing right now. Please reach out immediately to:\n\n🚨 **Emergency Services: 911**\n📞 **Crisis Hotline: 988**\n🏥 **Campus Emergency: [Your Campus Number]**\n\nI'm here to support you, but please get immediate professional help. You don't have to go through this alone.`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, crisisMessage]);
+        setIsLoading(false);
+        setIsTyping(false);
+        return;
+      }
+      
+      // Get regular response
+      const response = await geminiService.sendMessage(sessionId, userMessage.content);
+      
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: response,
+        timestamp: new Date()
       };
       
-      setMessages(prev => [...prev, newMessage]);
-      setMessage('');
+      setMessages(prev => {
+        const updatedMessages = [...prev, assistantMessage];
+        
+        // Analyze conversation context after a few exchanges
+        if (updatedMessages.length >= 6) {
+          analyzeConversationAndProvideInsights(updatedMessages);
+        }
+        
+        return updatedMessages;
+      });
+      
+      // Dynamic issue categorization
+      if (messages.length >= 2) {
+        const detectedIssue = await geminiService.categorizeIssue(userMessage.content);
+        if (detectedIssue !== selectedIssue && detectedIssue !== 'general') {
+          const issueInfo = mentalHealthIssues.find(issue => issue.type === detectedIssue);
+          if (issueInfo) {
+            const suggestionMessage: ChatMessage = {
+              id: (Date.now() + 2).toString(),
+              role: 'assistant',
+              content: `I notice you might be dealing with ${issueInfo.label.toLowerCase()}. Would you like me to adjust our conversation to focus more specifically on this area? I can provide more targeted support and resources.`,
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, suggestionMessage]);
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'I\'m sorry, I\'m having trouble responding right now. Please try again.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+      setIsTyping(false);
     }
+  };
+  
+  const analyzeConversationAndProvideInsights = async (conversationHistory: ChatMessage[]) => {
+    try {
+      const analysis = await geminiService.analyzeConversationContext(conversationHistory);
+      
+      if (analysis.urgencyLevel === 'high' || analysis.urgencyLevel === 'crisis') {
+        const urgentMessage: ChatMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `I want to check in with you. Based on our conversation, I'm sensing this might be particularly challenging for you right now. Remember that seeking additional support is a sign of strength. Would you like me to share some immediate resources that might help?`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, urgentMessage]);
+      }
+      
+      // Provide tailored suggestions periodically
+      if (conversationHistory.length % 8 === 0) {
+        const suggestions = await geminiService.generateTailoredSuggestions(
+          selectedIssue,
+          conversationHistory.slice(-6).map(msg => `${msg.role}: ${msg.content}`).join('\n')
+        );
+        
+        const suggestionsMessage: ChatMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `Based on our conversation, here are some personalized suggestions:\n\n**Immediate steps you can try:**\n${suggestions.immediateActions.map(action => `• ${action}`).join('\n')}\n\n**Helpful resources:**\n${suggestions.resources.map(resource => `• ${resource}`).join('\n')}\n\nWould you like to explore any of these further?`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, suggestionsMessage]);
+      }
+    } catch (error) {
+      console.error('Error analyzing conversation:', error);
+    }
+  };
+
+  const handleIssueChange = (value: string) => {
+    setSelectedIssue(value);
+    setMessages([]);
+    setSessionId(null);
+    setChatStarted(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -111,12 +229,8 @@ const ChatPage = () => {
     }
   };
 
-  const getMoodIcon = (mood?: string) => {
-    switch (mood) {
-      case 'positive': return <Heart className="w-3 h-3 text-success" />;
-      case 'concerned': return <AlertTriangle className="w-3 h-3 text-warning" />;
-      default: return <Smile className="w-3 h-3 text-muted-foreground" />;
-    }
+  const getRoleIcon = (role: string) => {
+    return role === 'assistant' ? <Bot className="w-3 h-3 text-primary" /> : <Brain className="w-3 h-3 text-muted-foreground" />;
   };
 
   const formatTime = (date: Date) => {
@@ -142,26 +256,34 @@ const ChatPage = () => {
             
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/10">
-                <MessageCircle className="w-5 h-5 text-primary" />
+                <Bot className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="font-semibold text-foreground">Anonymous Support Chat</h1>
+                <h1 className="font-semibold text-foreground">AI Mental Health Counselor</h1>
                 <p className="text-sm text-muted-foreground">
-                  {currentProblemId ? t(`problems:${currentProblemId}.title`) : 'General Support'}
+                  {mentalHealthIssues.find(issue => issue.type === selectedIssue)?.label || 'General Support'}
                 </p>
               </div>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="flex items-center gap-2">
-              <Users className="w-3 h-3" />
-              {connectedUsers} online
-            </Badge>
+            <Select value={selectedIssue} onValueChange={handleIssueChange}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Select issue type" />
+              </SelectTrigger>
+              <SelectContent>
+                {mentalHealthIssues.map((issue) => (
+                  <SelectItem key={issue.type} value={issue.type}>
+                    {issue.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             
             <Badge variant="outline" className="flex items-center gap-2">
               <Shield className="w-3 h-3" />
-              Anonymous
+              Confidential
             </Badge>
           </div>
         </div>
@@ -174,9 +296,9 @@ const ChatPage = () => {
           <div className="flex items-center gap-3">
             <Shield className="w-5 h-5 text-primary" />
             <div>
-              <p className="font-medium text-foreground">Safe Space Guidelines</p>
+              <p className="font-medium text-foreground">Confidential AI Counseling</p>
               <p className="text-sm text-muted-foreground">
-                This chat is moderated for safety. Be respectful, supportive, and remember all conversations are anonymous.
+                This is a safe, confidential space. The AI counselor is here to provide support and guidance for your mental health concerns.
               </p>
             </div>
           </div>
@@ -186,8 +308,11 @@ const ChatPage = () => {
         <Card className="glass-card flex-1 flex flex-col overflow-hidden">
           <div className="p-4 border-b border-border/50">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-              <span className="text-sm text-muted-foreground">Connected to anonymous support chat</span>
+              <div className={`w-2 h-2 rounded-full ${chatStarted ? 'bg-success' : 'bg-warning'} animate-pulse`} />
+              <span className="text-sm text-muted-foreground">
+                {chatStarted ? 'Connected to AI Counselor' : 'Initializing AI Counselor...'}
+              </span>
+              {isLoading && <Loader2 className="w-3 h-3 animate-spin" />}
             </div>
           </div>
           
@@ -201,16 +326,16 @@ const ChatPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     className={`flex flex-col gap-1 ${
-                      msg.sender === student?.ephemeralHandle 
+                      msg.role === 'user' 
                         ? 'items-end' 
                         : 'items-start'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
-                        {msg.sender}
+                        {msg.role === 'user' ? 'You' : 'AI Counselor'}
                       </Badge>
-                      {getMoodIcon(msg.mood)}
+                      {getRoleIcon(msg.role)}
                       <span className="text-xs text-muted-foreground">
                         {formatTime(msg.timestamp)}
                       </span>
@@ -218,12 +343,12 @@ const ChatPage = () => {
                     
                     <div
                       className={`max-w-[70%] p-3 rounded-lg ${
-                        msg.sender === student?.ephemeralHandle
+                        msg.role === 'user'
                           ? 'bg-primary text-primary-foreground ml-auto'
                           : 'bg-card text-card-foreground'
                       }`}
                     >
-                      <p className="text-sm">{msg.content}</p>
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -253,29 +378,30 @@ const ChatPage = () => {
           <div className="p-4 border-t border-border/50">
             <div className="flex gap-3">
               <Input
-                placeholder={t('chat.message_placeholder')}
+                placeholder={chatStarted ? "Share what's on your mind..." : "Connecting to AI counselor..."}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 className="flex-1"
-                maxLength={500}
+                maxLength={1000}
+                disabled={!chatStarted || isLoading}
               />
               <Button
                 onClick={handleSendMessage}
-                disabled={!message.trim()}
+                disabled={!message.trim() || !chatStarted || isLoading}
                 className="px-4"
               >
-                <Send className="w-4 h-4" />
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </Button>
             </div>
             
             <div className="flex justify-between items-center mt-2">
               <p className="text-xs text-muted-foreground">
-                Messages are encrypted and auto-delete after 30 days
+                Your conversations are confidential and secure
               </p>
-              <Button variant="ghost" size="sm" className="text-xs text-destructive">
-                Report inappropriate content
-              </Button>
+              <p className="text-xs text-muted-foreground">
+                {message.length}/1000 characters
+              </p>
             </div>
           </div>
         </Card>

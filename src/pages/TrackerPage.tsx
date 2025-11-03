@@ -44,7 +44,7 @@ interface Goal {
 const TrackerPage = () => {
   const { t } = useTranslation(['common']);
   const navigate = useNavigate();
-  const { screeningResults, student } = useStore();
+  const { student } = useStore();
   const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
 
   // Mock data for demonstration
@@ -224,7 +224,7 @@ const TrackerPage = () => {
         </div>
 
         <Tabs defaultValue="mood" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 glass-card">
+          <TabsList className="grid w-full grid-cols-3 glass-card">
             <TabsTrigger value="mood" className="flex items-center gap-2">
               <Heart className="w-4 h-4" />
               Mood
@@ -232,10 +232,6 @@ const TrackerPage = () => {
             <TabsTrigger value="goals" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
               Goals
-            </TabsTrigger>
-            <TabsTrigger value="assessments" className="flex items-center gap-2">
-              <Brain className="w-4 h-4" />
-              Assessments
             </TabsTrigger>
             <TabsTrigger value="insights" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
@@ -367,47 +363,7 @@ const TrackerPage = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="assessments" className="mt-6">
-            <div className="space-y-6">
-              {screeningResults.map((result) => (
-                <Card key={result.id} className="glass-card p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h4 className="font-semibold text-foreground">{result.tool} Assessment</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Completed on {result.timestamp.toLocaleDateString()}
-                      </p>
-                    </div>
-                    
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-foreground">{result.score}</p>
-                      <Badge variant="outline" className="capitalize">
-                        {result.severity}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      Next assessment recommended in 2 weeks
-                    </span>
-                  </div>
-                </Card>
-              ))}
-              
-              <Card className="glass-card p-6 text-center">
-                <Brain className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold text-foreground mb-2">Take Another Assessment</h3>
-                <p className="text-muted-foreground mb-4">
-                  Regular check-ins help track your mental health progress
-                </p>
-                <Button className="btn-ambient">
-                  Start New Assessment
-                </Button>
-              </Card>
-            </div>
-          </TabsContent>
+
 
           <TabsContent value="insights" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

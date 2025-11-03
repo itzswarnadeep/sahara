@@ -13,9 +13,8 @@ import {
   Activity,
   ArrowLeft,
   Users,
-  Headphones,
-  Play,
-  Pause
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { useStore } from '@/stores/useStore';
 import { useAudio } from '@/components/audio/AudioManager';
@@ -107,11 +106,11 @@ const ProblemInterface = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={audio.isPlaying ? audio.pause : () => audio.play('ambient')}
+              onClick={audio.toggleMute}
               className="flex items-center gap-2"
+              aria-label={audio.isMuted ? 'Unmute audio' : 'Mute audio'}
             >
-              {audio.isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-              <Headphones className="w-3 h-3" />
+              {audio.isMuted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
             </Button>
           </div>
         </div>

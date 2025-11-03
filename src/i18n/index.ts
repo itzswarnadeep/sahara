@@ -10,9 +10,9 @@ import hiCommon from './locales/hi/common.json';
 import hiProblems from './locales/hi/problems.json';
 import hiUI from './locales/hi/ui.json';
 
-import ksCommon from './locales/ks/common.json';
-import ksProblems from './locales/ks/problems.json';
-import ksUI from './locales/ks/ui.json';
+import urCommon from './locales/ur/common.json';
+import urProblems from './locales/ur/problems.json';
+import urUI from './locales/ur/ui.json';
 
 const resources = {
   en: {
@@ -25,10 +25,10 @@ const resources = {
     problems: hiProblems,
     ui: hiUI,
   },
-  ks: {
-    common: ksCommon,
-    problems: ksProblems,
-    ui: ksUI,
+  ur: {
+    common: urCommon,
+    problems: urProblems,
+    ui: urUI,
   },
 };
 

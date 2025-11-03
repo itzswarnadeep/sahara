@@ -1,12 +1,12 @@
 {
   "app": {
-    "name": "Student SafeSpace",
+    "name": "Sahara",
     "tagline": "Your anonymous mental health companion",
     "description": "A safe, stigma-free space for student mental health support"
   },
   "navigation": {
     "home": "Home",
-    "screening": "Get Started", 
+ 
     "chat": "Anonymous Chat",
     "resources": "Resources",
     "booking": "Talk to Counselor",
@@ -14,7 +14,7 @@
     "help": "Help"
   },
   "actions": {
-    "start_screening": "Start Screening",
+
     "continue": "Continue",
     "next": "Next",
     "previous": "Previous",
@@ -45,14 +45,7 @@
     "kashmiri": "کٲشُر (Kashmiri)",
     "urdu": "اردو (Urdu)"
   },
-  "screening": {
-    "title": "Mental Health Screening",
-    "subtitle": "Help us understand how you're feeling",
-    "progress": "Question {{current}} of {{total}}",
-    "phq9_intro": "Over the last 2 weeks, how often have you been bothered by any of the following problems?",
-    "gad7_intro": "Over the last 2 weeks, how often have you been bothered by the following problems?",
-    "completion": "Thank you for sharing. Based on your responses, we'll connect you with the most helpful resources."
-  },
+
   "problems": {
     "title": "Your Support Space",
     "select_primary": "Primary concern:",

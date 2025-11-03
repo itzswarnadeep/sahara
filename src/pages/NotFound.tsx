@@ -23,7 +23,7 @@ const NotFound = () => {
           The page you're looking for doesn't exist or has been moved.
         </p>
         <Button asChild className="btn-ambient">
-          <a href="/">Return to SafeSpace</a>
+          <a href="/">Return to Sahara</a>
         </Button>
       </Card>
     </div>

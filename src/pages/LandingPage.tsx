@@ -11,16 +11,22 @@ import {
   Calendar,
   BookOpen,
   Headphones,
-  ArrowRight
+  ArrowRight,
+  GraduationCap,
+  UserCheck,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { useStore } from '@/stores/useStore';
 import { useNavigate } from 'react-router-dom';
+import { useAudio } from '@/components/audio/AudioManager';
 import heroImage from '@/assets/hero-mental-health.jpg';
 
 const LandingPage = () => {
   const { t, i18n } = useTranslation(['common', 'problems']);
   const { setLanguage } = useStore();
   const navigate = useNavigate();
+  const audio = useAudio();
   const [selectedLanguage, setSelectedLanguage] = useState('en');
 
   const handleLanguageChange = (lang: string) => {
@@ -52,35 +58,75 @@ const LandingPage = () => {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
+            <img 
+              src="/sahara-logo.svg" 
+              alt="Sahara Logo" 
+              className="w-10 h-10"
+            />
             <h1 className="text-xl font-playfair font-semibold text-foreground">
-              {t('app.name')}
+              Sahara
             </h1>
           </motion.div>
 
-          {/* Language Selector */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex gap-2"
-          >
-            {languages.map((lang) => (
+          <div className="flex items-center gap-4">
+            {/* Audio Control */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               <Button
-                key={lang.code}
-                variant={selectedLanguage === lang.code ? "default" : "ghost"}
+                variant="ghost"
                 size="sm"
-                onClick={() => handleLanguageChange(lang.code)}
-                className="text-sm font-medium"
+                onClick={audio.toggleMute}
+                className="p-2 hover:bg-primary/10 transition-colors rounded-full"
+                aria-label={audio.isMuted ? 'Unmute therapeutic audio' : 'Mute therapeutic audio'}
+                title={audio.isMuted ? 'Enable calming background sounds' : 'Disable background sounds'}
               >
-                <span className="mr-1">{lang.flag}</span>
-                {lang.name}
+                {audio.isMuted ? (
+                  <VolumeX className="w-5 h-5 text-muted-foreground" />
+                ) : (
+                  <Volume2 className="w-5 h-5 text-primary" />
+                )}
               </Button>
-            ))}
-          </motion.div>
+            </motion.div>
+
+            {/* Language Selector */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex gap-2"
+            >
+              {languages.map((lang) => (
+                <Button
+                  key={lang.code}
+                  variant={selectedLanguage === lang.code ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleLanguageChange(lang.code)}
+                  className="text-sm font-medium"
+                >
+                  <span className="mr-1">{lang.flag}</span>
+                  {lang.name}
+                </Button>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </header>
+
+      {/* Audio Status Indicator */}
+      {audio.isBackgroundAudioLoaded && !audio.isMuted && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-20 right-6 z-50"
+        >
+          <Badge variant="secondary" className="flex items-center gap-2 bg-primary/10 text-primary border-primary/20">
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            Therapeutic audio playing
+          </Badge>
+        </motion.div>
+      )}
 
       {/* Hero Section */}
       <main className="relative z-10 px-6 py-12">
@@ -96,9 +142,9 @@ const LandingPage = () => {
             </Badge>
             
             <h2 className="text-4xl md:text-6xl font-playfair font-bold text-foreground mb-6 leading-tight">
-              Your Mental Health
+              You're Not Alone
               <span className="text-transparent bg-clip-text bg-gradient-primary block mt-2">
-                Journey Starts Here
+                In This Journey
               </span>
             </h2>
             
@@ -107,11 +153,52 @@ const LandingPage = () => {
             </p>
           </motion.div>
 
-          {/* CTA Buttons */}
+          {/* Portal Selection */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
+            className="mb-12"
+          >
+            <h3 className="text-2xl font-semibold text-foreground mb-6">Choose Your Portal</h3>
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {/* Student Portal */}
+              <Card className="glass-card p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => navigate('/student/login')}>
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                    <GraduationCap className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-foreground mb-2">Student Portal</h4>
+                  <p className="text-muted-foreground mb-4">Access mental health resources, anonymous chat, and personalized support tools.</p>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                    Enter Student Portal
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Counselor Portal */}
+              <Card className="glass-card p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => navigate('/counselor/login')}>
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                    <UserCheck className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-foreground mb-2">Counselor Portal</h4>
+                  <p className="text-muted-foreground mb-4">Professional dashboard for managing students, sessions, and crisis interventions.</p>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                    Enter Counselor Portal
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </motion.div>
+
+          {/* Quick Access for Students */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
           >
             <Button

@@ -112,6 +112,140 @@ const ResourcesPage = () => {
       tags: ['social anxiety', 'confidence', 'friendships'],
       rating: 4.5,
       views: 743
+    },
+    // New Instructional Videos
+    {
+      id: '7',
+      title: 'Mindfulness Meditation for Beginners',
+      type: 'video',
+      category: 'anxiety',
+      duration: '20 min',
+      description: 'Step-by-step video guide to practicing mindfulness meditation for stress reduction and mental clarity.',
+      tags: ['mindfulness', 'meditation', 'stress relief', 'beginners'],
+      rating: 4.9,
+      views: 3421,
+      featured: true
+    },
+    {
+      id: '8',
+      title: 'Cognitive Behavioral Therapy Techniques',
+      type: 'video',
+      category: 'anxiety',
+      duration: '25 min',
+      description: 'Professional therapist demonstrates CBT techniques for managing negative thought patterns and anxiety.',
+      tags: ['CBT', 'therapy', 'negative thoughts', 'coping skills'],
+      rating: 4.8,
+      views: 2876
+    },
+    {
+      id: '9',
+      title: 'Time Management Strategies for Students',
+      type: 'video',
+      category: 'academic_stress',
+      duration: '18 min',
+      description: 'Comprehensive video tutorial on effective time management techniques to reduce academic overwhelm.',
+      tags: ['time management', 'productivity', 'study skills', 'organization'],
+      rating: 4.7,
+      views: 1987
+    },
+    {
+      id: '10',
+      title: 'Building Self-Confidence and Self-Esteem',
+      type: 'video',
+      category: 'social',
+      duration: '22 min',
+      description: 'Interactive video workshop on developing healthy self-confidence and overcoming self-doubt.',
+      tags: ['self-confidence', 'self-esteem', 'personal growth', 'motivation'],
+      rating: 4.6,
+      views: 1654
+    },
+    {
+      id: '11',
+      title: 'Effective Communication in Relationships',
+      type: 'video',
+      category: 'relationships',
+      duration: '30 min',
+      description: 'Learn essential communication skills for healthier relationships with family, friends, and partners.',
+      tags: ['communication', 'relationships', 'conflict resolution', 'empathy'],
+      rating: 4.8,
+      views: 2234
+    },
+    {
+      id: '12',
+      title: 'Career Planning and Goal Setting',
+      type: 'video',
+      category: 'career',
+      duration: '28 min',
+      description: 'Comprehensive guide to career exploration, goal setting, and creating actionable career plans.',
+      tags: ['career planning', 'goal setting', 'professional development', 'future planning'],
+      rating: 4.7,
+      views: 1432
+    },
+    {
+      id: '13',
+      title: 'Progressive Muscle Relaxation Technique',
+      type: 'video',
+      category: 'sleep',
+      duration: '16 min',
+      description: 'Guided video instruction for progressive muscle relaxation to improve sleep quality and reduce tension.',
+      tags: ['relaxation', 'sleep', 'muscle tension', 'stress relief'],
+      rating: 4.8,
+      views: 1876
+    },
+    {
+      id: '14',
+      title: 'Understanding and Managing Depression',
+      type: 'video',
+      category: 'anxiety',
+      duration: '35 min',
+      description: 'Educational video about depression symptoms, causes, and evidence-based management strategies.',
+      tags: ['depression', 'mental health', 'coping strategies', 'awareness'],
+      rating: 4.9,
+      views: 3102
+    },
+    {
+      id: '15',
+      title: 'Healthy Boundaries in College Life',
+      type: 'video',
+      category: 'relationships',
+      duration: '24 min',
+      description: 'Learn how to set and maintain healthy boundaries in academic, social, and personal situations.',
+      tags: ['boundaries', 'self-care', 'assertiveness', 'personal space'],
+      rating: 4.6,
+      views: 1543
+    },
+    {
+      id: '16',
+      title: 'Financial Wellness for Students',
+      type: 'video',
+      category: 'career',
+      duration: '26 min',
+      description: 'Practical video guide to managing finances, budgeting, and reducing financial stress as a student.',
+      tags: ['financial wellness', 'budgeting', 'money management', 'student finances'],
+      rating: 4.5,
+      views: 1298
+    },
+    {
+      id: '17',
+      title: 'Study Techniques for Better Learning',
+      type: 'video',
+      category: 'academic_stress',
+      duration: '32 min',
+      description: 'Evidence-based study methods and learning techniques to improve academic performance and reduce stress.',
+      tags: ['study techniques', 'learning', 'memory', 'academic success'],
+      rating: 4.8,
+      views: 2567
+    },
+    {
+      id: '18',
+      title: 'Creating a Healthy Sleep Routine',
+      type: 'video',
+      category: 'sleep',
+      duration: '19 min',
+      description: 'Step-by-step guide to establishing healthy sleep habits and creating an optimal sleep environment.',
+      tags: ['sleep routine', 'sleep hygiene', 'bedtime habits', 'rest'],
+      rating: 4.7,
+      views: 1789
     }
   ];
 
